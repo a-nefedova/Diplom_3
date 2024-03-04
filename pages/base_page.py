@@ -1,6 +1,9 @@
 import allure
+from locators import Locators
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import random
+import string
 
 
 class BasePage:
@@ -24,3 +27,33 @@ class BasePage:
 
     def wait_until_url_change(self, url):
         WebDriverWait(self.driver, 5).until(EC.url_changes(url))
+
+    def current_url(self):
+        return self.driver.current_url
+
+    @staticmethod
+    def random_string():
+        letters = string.ascii_lowercase
+        random_str = ''.join(random.choice(letters)[:10] for i in range(10))
+        return random_str
+
+    def enter_random_email(self):
+        self.find_visible_element(Locators.EMAIL_INPUT).send_keys(self.random_string())
+
+    # def find_element_text_exclude(self, locator, text):
+    #     return WebDriverWait(self.driver, 10).until(EC.text_to_be_present_in_element(locator, text))
+
+    @staticmethod
+    def valid_creds():
+        creds = {
+            'email': f'{BasePage.random_string()}@yandex.ru',
+            'password': BasePage.random_string(),
+            'name': BasePage.random_string()
+        }
+        return creds
+
+    def log_in(self, creds):
+        self.find_visible_element(Locators.LOGIN_BUTTON)
+        self.find_visible_element(Locators.EMAIL).send_keys(creds['email'])
+        self.find_visible_element(Locators.PASSWORD).send_keys(creds['password'])
+        self.find_visible_element(Locators.LOGIN_BUTTON).click()
