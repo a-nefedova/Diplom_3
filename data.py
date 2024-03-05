@@ -5,6 +5,7 @@ class URLs:
     RESET_PASS = f'{HOMEPAGE}/reset-password'
     ACCOUNT = f'{HOMEPAGE}/account'
     LOGGED_ACCOUNT = f'{ACCOUNT}/profile'
+    ORDER_FEED = f'{HOMEPAGE}/feed'
 
 
 class API:

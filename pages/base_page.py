@@ -40,8 +40,8 @@ class BasePage:
     def enter_random_email(self):
         self.find_visible_element(Locators.EMAIL_INPUT).send_keys(self.random_string())
 
-    # def find_element_text_exclude(self, locator, text):
-    #     return WebDriverWait(self.driver, 10).until(EC.text_to_be_present_in_element(locator, text))
+    def find_element_text_exclude(self, locator, text):
+        return WebDriverWait(self.driver, 10).until_not(EC.text_to_be_present_in_element(locator, text))
 
     @staticmethod
     def valid_creds():
