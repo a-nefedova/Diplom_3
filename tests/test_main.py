@@ -1,37 +1,27 @@
-from selenium.webdriver.common.by import By
-
 from pages.base_page import BasePage
 from data import URLs
 from locators import Locators
 import allure
-
-from time import sleep
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
+import pytest
 
 
 class TestMain:
 
-    def test_open_constructor(self, driver):
-        constructor = BasePage(driver)
+    @allure.title('Проверяем переход по клику на кнопки «Конструктор» и «Лента заказов»')
+    @allure.description('Используем параметризацию для кнопок')
+    @pytest.mark.parametrize('url,button,header',
+                             [[URLs.ORDER_FEED, Locators.CONSTRUCTOR_BUTTON, "Соберите бургер"],
+                              [URLs.HOMEPAGE, Locators.ORDER_FEED_BUTTON, "Лента заказов"]])
+    def test_click_button(self, driver, url, button, header):
+        click = BasePage(driver)
 
-        constructor.go_to_page(URLs.ORDER_FEED)
-        constructor.click_visible_element(Locators.CONSTRUCTOR_BUTTON)
+        click.go_to_page(url)
+        click.click_visible_element(button)
 
-        constructor_header = constructor.get_element_text(Locators.H1_HEADER)
+        header_text = click.get_element_text(Locators.H1_HEADER)
 
-        assert constructor_header == "Соберите бургер"
-
-    def test_open_order_feed(self, driver):
-        order_feed = BasePage(driver)
-
-        order_feed.go_to_page(URLs.HOMEPAGE)
-        order_feed.click_visible_element(Locators.ORDER_FEED_BUTTON)
-
-        order_feed_header = order_feed.get_element_text(Locators.H1_HEADER)
-
-        assert order_feed_header == "Лента заказов"
+        assert header_text == header
 
     @allure.title('Проверяем, что если кликнуть на ингредиент, появится всплывающее окно с деталями')
     def test_open_ingredient_modal(self, driver):
@@ -50,10 +40,10 @@ class TestMain:
 
         modal.go_to_page(URLs.HOMEPAGE)
         modal.click_visible_element(Locators.INGREDIENT)
-        before_close_modal_class = modal.find_visible_element(Locators.MODAL).get_attribute("class")
+        before_close_modal_class = modal.get_attribute_value(Locators.MODAL, 'class')
 
         modal.click_visible_element(Locators.MODAL_CLOSE)
-        after_close_modal_class = modal.find_visible_element(Locators.MODAL).get_attribute("class")
+        after_close_modal_class = modal.get_attribute_value(Locators.MODAL, 'class')
 
         assert 'opened' in before_close_modal_class
         assert 'opened' not in after_close_modal_class

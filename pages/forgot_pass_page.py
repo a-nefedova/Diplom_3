@@ -1,11 +1,8 @@
 from pages.base_page import BasePage
 from locators import Locators
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import random
-import string
 
 
 class ForgotPassPage(BasePage):
 
-    ...
+    def enter_random_email(self):
+        self.find_visible_element(Locators.EMAIL_INPUT).send_keys(self.random_string())
