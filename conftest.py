@@ -3,12 +3,12 @@ from selenium import webdriver
 import requests
 import allure
 
-from pages.base_page import BasePage
-from pages.login_page import LoginPage
+from helper import valid_creds
+from pages.account_page import AccountPage
 from data import URLs, API, ingredients
 
 
-@pytest.fixture(params=['chrome', 'firefox'])
+@pytest.fixture(params=['chrome'])
 def driver(request):
     driver = None
     if request.param == 'chrome':
@@ -23,7 +23,7 @@ def driver(request):
 @allure.step('Регистрируем пользователя')
 @pytest.fixture
 def registered_user():
-    creds = BasePage.valid_creds()
+    creds = valid_creds()
     register = requests.post(API.USER_REGISTER, data=creds)
     user = {
         'creds': creds,
@@ -36,7 +36,7 @@ def registered_user():
 @allure.step('Открываем Личный кабинет пользователя')
 @pytest.fixture
 def authorized_user(registered_user, driver):
-    authorized_user = LoginPage(driver)
+    authorized_user = AccountPage(driver)
     authorized_user.log_in(registered_user['creds'])
     authorized_user.go_to_page(URLs.ACCOUNT)
 

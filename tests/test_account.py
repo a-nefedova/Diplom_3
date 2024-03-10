@@ -1,6 +1,6 @@
-from pages.login_page import LoginPage
+from pages.account_page import AccountPage
 from data import URLs
-from locators import Locators
+from locators.account_page_locators import LocatorsAccount
 import allure
 
 
@@ -8,13 +8,11 @@ class TestAccount:
 
     @allure.title('Проверяем переход по клику на «Личный кабинет»')
     def test_account_button(self, driver, registered_user):
-        account = LoginPage(driver)
+        account = AccountPage(driver)
 
         account.log_in(registered_user['creds'])
-
-        account.click_visible_element(Locators.ACCOUNT_LINK)
-
-        email = account.get_attribute_value(Locators.ACCOUNT_EMAIL, 'value')
+        account.click_visible_element(LocatorsAccount.ACCOUNT_LINK)
+        email = account.get_email()
 
         assert email == registered_user['creds']['email']
 
@@ -22,20 +20,17 @@ class TestAccount:
     def test_order_history(self, driver, auth_user_order):
         creds = auth_user_order['creds']
         api_order_number = auth_user_order['number']
-        history = LoginPage(driver)
+        history = AccountPage(driver)
 
         history.log_in(creds)
-        history.go_to_page(URLs.ACCOUNT)
-        history.click_visible_element(Locators.ORDER_HISTORY_BUTTON)
-        web_raw_order_number = history.get_element_text(Locators.ORDER_NUMBER_HISTORY)
-        web_order_number = int(web_raw_order_number[-5:])
+        history.click_order_history_button()
+        web_order_number = history.get_order_number(LocatorsAccount.ORDER_NUMBER_HISTORY)
 
         assert web_order_number == api_order_number
 
     @allure.title('Проверяем выход из аккаунта')
-    def test_logout(self, authorized_user):
+    def test_logout(self, driver, authorized_user):
 
-        authorized_user.click_visible_element(Locators.LOGOUT_BUTTON)
-        authorized_user.wait_until_url_change(URLs.LOGGED_ACCOUNT)
+        authorized_user.click_logout_button()
 
-        assert authorized_user.current_url() == URLs.LOGIN
+        assert driver.current_url == URLs.LOGIN
