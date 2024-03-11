@@ -27,7 +27,7 @@ class TestOrderFeed:
         user_order_number = authorized_user.get_order_history_number()
 
         order.go_to_page(URLs.ORDER_FEED)
-        order_list = order.order_number_list(LocatorsOrder.ORDER_FEED_LIST)
+        order_list = order.wait_order_in_list(user_order_number, LocatorsOrder.ORDER_FEED_LIST)
 
         assert user_order_number in order_list
 

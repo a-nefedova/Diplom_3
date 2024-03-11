@@ -8,7 +8,7 @@ from pages.account_page import AccountPage
 from data import URLs, API, ingredients
 
 
-@pytest.fixture(params=['chrome'])
+@pytest.fixture(params=['chrome', 'firefox'])
 def driver(request):
     driver = None
     if request.param == 'chrome':
